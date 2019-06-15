@@ -6,9 +6,9 @@ class UserTest < ActiveSupport::TestCase
     @user = User.new(name: "Example User", email: "user@example.com")
   end
 
-  test "User_model 空白エラーテスト" do
-    @user.name = " "
+  test "User_model email空白エラーテスト" do
     @user.email = " "
     assert_not @user.valid?
   end
+
 end
