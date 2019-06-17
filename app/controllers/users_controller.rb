@@ -30,6 +30,7 @@ class UsersController < ApplicationController
       if @user.save
         # format.html { redirect_to @user, notice: 'User was successfully created.' }
         # format.json { render :show, status: :created, location: @user }
+        log_in(@user) # 新規登録したら、ログインするように設定
         flash[:success] = "登録が完了しました！"
         redirect_to @user
       else

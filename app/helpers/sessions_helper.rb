@@ -9,6 +9,7 @@ module SessionsHelper
     if !!session[:user_id]
       @current_user ||= User.find_by(id: session[:user_id])
       # session[:user_id] = user.id
+    end
   end
 
   # ユーザーがログインしていればtrue、その他ならfalseを返す
