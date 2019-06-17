@@ -10,6 +10,6 @@ class ActiveSupport::TestCase
   fixtures :all
   # test環境でApplicationHelperを使えるように入れ込んだ
   include ApplicationHelper
-
+  include SessionsHelper
   # Add more helper methods to be used by all tests here...
 end

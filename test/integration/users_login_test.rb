@@ -25,5 +25,6 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     assert_template 'users/show'
     assert_select "a[href=?]", login_path, count: 0
     assert_select "a[href=?]", logout_path
+    assert logged_in?
   end
 end
