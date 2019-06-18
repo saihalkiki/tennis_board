@@ -16,13 +16,13 @@ class User < ApplicationRecord
     BCrypt::Password.create(string, cost: cost)
   end
 
-  # ランダムなトークンを返す
+  # ランダムなトークンを返す->分ける必要はあるのか？rememberメソッドに直接SecureRandom.urlsafe_base64を入れても動作する
   def User.new_token
     SecureRandom.urlsafe_base64
   end
 
   # 永続セッションのためにユーザーをデータベースに記憶する
-  def remember_token
+  def remember
     self.remember_token = User.new_token
     update_attribute(:remember_digest, User.digest(remember_token))
   end

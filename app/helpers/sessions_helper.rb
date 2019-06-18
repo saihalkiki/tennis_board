@@ -4,6 +4,16 @@ module SessionsHelper
     session[:user_id] = user.id
   end
 
+
+  # ユーザーのセッションを永続的にする
+  def remember(user)
+    user.remember
+    cookies.permanent.signed[:user_id] = user.id
+    # cookies.signed[:user_id] = { value: user.id, expires: 20.years.from_now.utc }
+    cookies.permanent[:remember_token] = user.remember_token
+    # cookies[:remember_token] = { value: user.remember_token, expires: 20.years.from_now.utc }
+  end
+
   # 現在ログイン中のユーザーデータ(いない場合はnilを返す)
   def current_user
     if !!session[:user_id]
