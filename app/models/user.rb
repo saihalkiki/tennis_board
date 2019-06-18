@@ -30,7 +30,7 @@ class User < ApplicationRecord
   # 渡されたトークンがダイジェストと一致したらtrue
   def authenticated?(remember_token)
     return false if remember_digest.nil?
-    BCrypt::Password.new(attribute_digest).is_password?(remember_token)
+    BCrypt::Password.new(remember_digest).is_password?(remember_token)
     # secure_passwordのソースコード：https://github.com/rails/rails/blob/master/activemodel/lib/active_model/secure_password.rbを参照
     # .is_password？メソッドは==と同等。bcrypt gemのソースコードのソースコードを参照：https://github.com/codahale/bcrypt-ruby/blob/master/lib/bcrypt/password.rb
   end
