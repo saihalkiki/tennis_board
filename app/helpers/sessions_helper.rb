@@ -14,11 +14,16 @@ module SessionsHelper
     # cookies[:remember_token] = { value: user.remember_token, expires: 20.years.from_now.utc }
   end
 
-  # 現在ログイン中のユーザーデータ(いない場合はnilを返す)
+  # 現在ログイン中のユーザー、もしくは、記憶トークンcookieに対応するユーザーを返し、いない場合はnilを返す
   def current_user
-    if !!session[:user_id]
-      @current_user ||= User.find_by(id: session[:user_id])
-      # session[:user_id] = user.id
+    if (user_id = session[:user_id])
+      @current_user ||= User.find_by(id: user_id)
+    elsif (user_id = cookies.signed[:user_id])
+      user = User.find_by(id: user_id)
+      if user && user.authenticated?(cookies[:remember_token])
+        log_in user
+        @current_user = user
+      end
     end
   end
 
