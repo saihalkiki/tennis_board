@@ -55,4 +55,8 @@ class UserTest < ActiveSupport::TestCase
     assert_not @user.valid?
   end
 
+  test "ダイジェストが存在しない場合のauthenticated?の動作テスト" do
+    assert_not @user.authenticated?('')
+  end
+
 end
