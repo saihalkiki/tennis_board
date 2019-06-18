@@ -16,7 +16,7 @@ class User < ApplicationRecord
     BCrypt::Password.create(string, cost: cost)
   end
 
-  # ランダムなトークンを返す->分ける必要はあるのか？rememberメソッドに直接SecureRandom.urlsafe_base64を入れても動作する
+  # ランダムなトークンを返す => 分ける必要はあるのか？rememberメソッドに直接self.remember_token = SecureRandom.urlsafe_base64としても動作するが...。
   def User.new_token
     SecureRandom.urlsafe_base64
   end
@@ -32,6 +32,11 @@ class User < ApplicationRecord
     BCrypt::Password.new(attribute_digest).is_password?(remember_token)
     # secure_passwordのソースコード：https://github.com/rails/rails/blob/master/activemodel/lib/active_model/secure_password.rbを参照
     # .is_password？メソッドは==と同等。bcrypt gemのソースコードのソースコードを参照：https://github.com/codahale/bcrypt-ruby/blob/master/lib/bcrypt/password.rb
+  end
+
+  # ユーザーのログイン情報を破棄する
+  def forget
+    update_attribute(:remember_digest, nil)
   end
 
 end
