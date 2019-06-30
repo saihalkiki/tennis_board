@@ -8,7 +8,7 @@ class User < ApplicationRecord
   uniqueness: { case_sensitive: false }
   # メールアドレスの大文字小文字を無視した一意性
   has_secure_password
-  validates :password, presence: true, length: {minimum: 6}
+  validates :password, presence: true, length: {minimum: 6}, allow_nil: true
 
   # test_fixture向けのdigestメソッドを追加->渡された文字列のハッシュ値を返す
   def User.digest(string)

@@ -6,9 +6,15 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     @other_user = users(:archer)
   end
 
-  test "should get index" do
-    get users_url
+  test "ログインしている場合のusers_pathの動作テスト" do
+    log_in_as(@user)
+    get users_path
     assert_response :success
+  end
+
+  test "ログインしていない時、indexページ(ユーザー一覧)を開こうとした際、リダイレクトするテスト" do
+    get users_path
+    assert_redirected_to login_url
   end
 
   test "should get new" do
@@ -16,33 +22,60 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  # test "should create user" do
-  #   assert_difference('User.count') do
-  #     post users_url, params: { user: { email: "saito75061@gmail.com", name: "齊藤悠" } }
-  #   end
-  #   assert_redirected_to user_url(User.last)
-  # end
-
-  test "should show user" do
-    get user_url(@user)
-    assert_response :success
+  test "ログインしてない時に編集にアクセスした時、flash表示しリダイレクトさせるテスト" do
+    get edit_user_path(@user)
+    assert_not flash.blank?
+    assert_redirected_to login_url
   end
 
-  test "should get edit" do
-    get edit_user_url(@user)
-    assert_response :success
+  test "ログインしていない時に編集データを渡した時、flash表示し、リダイレクトさせるテスト" do
+    patch user_path(@user), params: { user: { name: @user.name,
+                                              email: @user.email } }
+    assert_not flash.blank?
+    assert_redirected_to login_url
   end
 
-  # test "should update user" do
-  #   patch user_url(@user), params: { user: { email: @user.email, name: @user.name } }
-  #   assert_redirected_to user_url(@user)
-  # end
+  test "別のユーザー編集にアクセスできない動作テスト" do
+    log_in_as(@other_user)
+    get edit_user_path(@user)
+    # assert flash.blank?
+    assert flash.blank?
+    assert_redirected_to root_url
+  end
 
-  test "should destroy user" do
-    assert_difference('User.count', -1) do
-      delete user_url(@user)
+  test "別のユーザーが編集データを送信しても動作しないテスト" do
+    log_in_as(@other_user)
+    patch user_path(@user), params: { user: { name: @user.name,
+                                              email: @user.email } }
+    assert flash.blank?
+    assert_redirected_to root_url
+  end
+
+  test "別のユーザーがindexページ(ユーザー一覧)を開こうとした際、リダイレクトするテスト" do
+    get users_path
+    assert_redirected_to login_url
+  end
+
+  test "他のユーザーが管理権限を受け付けないようにするテスト" do
+    log_in_as(@other_user)
+    assert_not @other_user.admin?
+    patch user_path(@other_user), params: { user: { password: "password",  password_confirmation: "password",  admin: "true" } }
+    assert_not @other_user.reload.admin?
+  end
+
+  test "ログインしてない場合、消去アクション受け付けずリダイレクトするテスト" do
+    assert_no_difference 'User.count' do
+      delete user_path(@user)
     end
-
-    assert_redirected_to users_url
+    assert_redirected_to login_url
   end
+
+  test "ログインしているが管理ユーザーでない場合、消去アクションを受け付けずリダイレクトするテスト" do
+    log_in_as(@other_user)
+    assert_no_difference 'User.count' do
+      delete user_path(@user)
+    end
+    assert_redirected_to root_url
+  end
+
 end

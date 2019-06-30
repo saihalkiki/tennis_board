@@ -1,6 +1,13 @@
-<h1>Editing User</h1>
-
-<%= render 'form', user: @user %>
-
-<%= link_to 'Show', @user %> |
-<%= link_to 'Back', users_path %>
+<% provide(:title, "プロフィール") %>
+<% provide(:button_text, '変更する') %>
+<h1>プロフィール編集</h1>
+<p>以下のフォームに入力し、「変更する」ボタンを押せば変更できます。</p>
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <%= render 'users/form' %>
+      <div class="gravatar_edit">
+        <%= gravatar_for @user %>
+        <a href="http://gravatar.com/emails" target="_blank">Change</a>
+      </div>
+    </div>
+  </div>

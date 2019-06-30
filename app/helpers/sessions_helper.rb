@@ -27,6 +27,11 @@ module SessionsHelper
     end
   end
 
+  # ユーザーの比較し、true or falseを返す（他ユーザー操作対策用）
+  def current_user?(user)
+    user == current_user
+  end
+
   # ユーザーがログインしていればtrue、その他ならfalseを返す
   def logged_in?
     !current_user.nil?
@@ -44,6 +49,20 @@ module SessionsHelper
     forget(current_user)
     session.delete(:user_id)
     @current_user = nil
+  end
+
+  # フレンドリーフォワー用のメソッド追加
+  # フレンドリーフォワーとは？ => ユーザーが認証前に開こうとしていたページへ、認証後にリダイレクトさせること
+
+  # アクセスしようとしたURLを覚えておく
+  def store_location
+    session[:forwarding_url] = request.original_url if request.get?
+  end
+
+  # store_location ※記憶したURL（もしくはデフォルト値）にリダイレクト
+  def redirect_back_or(default)
+    redirect_to(session[:forwarding_url] || default)
+    session.delete(:forwarding_url)
   end
 
 end
